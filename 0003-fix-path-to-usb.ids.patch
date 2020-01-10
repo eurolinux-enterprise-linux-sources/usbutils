@@ -1,0 +1,25 @@
+From 5fad0b4e5a7861fa818cad54eed540adab6f13fa Mon Sep 17 00:00:00 2001
+From: Lukas Nykryn <lnykryn@redhat.com>
+Date: Wed, 2 Dec 2015 09:53:11 +0100
+Subject: [PATCH 03/16] fix path to usb.ids
+
+---
+ Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index 559f3ed..ff7caf8 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -38,7 +38,7 @@ EXTRA_DIST = \
+ 	usbutils.pc.in
+ 
+ lsusb.8: $(srcdir)/lsusb.8.in
+-	sed 's|VERSION|$(VERSION)|g;s|@usbids@|$(datadir)/usb.ids|g' $< >$@
++	sed 's|VERSION|$(VERSION)|g;s|@usbids@|$(datadir)/hwdata/usb.ids|g' $< >$@
+ 
+ usb-devices.1: $(srcdir)/usb-devices.1.in
+ 	sed 's|VERSION|$(VERSION)|g' $< >$@
+-- 
+2.4.3
+

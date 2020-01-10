@@ -1,0 +1,32 @@
+From df78b0b3a721815925d55d13cdb9d65a8207438c Mon Sep 17 00:00:00 2001
+From: Lukas Nykryn <lnykryn@redhat.com>
+Date: Tue, 25 Oct 2011 09:37:44 +0200
+Subject: [PATCH 06/16] Possible resource leak
+
+If (!pn || p == pn) is true function returns
+and memory allocated few lines earlier will
+be lost.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+---
+ lsusb-t.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/lsusb-t.c b/lsusb-t.c
+index 8bcdbf1..1737981 100644
+--- a/lsusb-t.c
++++ b/lsusb-t.c
+@@ -317,7 +317,10 @@ static void add_usb_interface(const char *d_name)
+ 	p = pn + 1;
+ 	i = strtoul(p, &pn, 10);
+ 	if (!pn || p == pn)
++	{
++		free(e);
+ 		return;
++	}
+ 	e->ifnum = i;
+ 	if (snprintf(e->name, MY_SYSFS_FILENAME_LEN, "%s", d_name) >= MY_SYSFS_FILENAME_LEN)
+ 		printf("warning: '%s' truncated to '%s'\n", e->name, d_name);
+-- 
+2.4.3
+

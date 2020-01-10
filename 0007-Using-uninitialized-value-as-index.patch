@@ -1,0 +1,28 @@
+From 0dcccc01e93d3a332c93b633ae38eaea0df40b75 Mon Sep 17 00:00:00 2001
+From: Lukas Nykryn <lnykryn@redhat.com>
+Date: Mon, 24 Oct 2011 12:33:58 +0200
+Subject: [PATCH 07/16] Using uninitialized value as index
+
+Variable 'k' was not initialize before it's usage here.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+---
+ lsusb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lsusb.c b/lsusb.c
+index 3d47721..73a1ef4 100644
+--- a/lsusb.c
++++ b/lsusb.c
+@@ -1471,7 +1471,7 @@ static void dump_audiocontrol_interface(libusb_device_handle *dev, const unsigne
+ 			dump_audio_bmcontrols("          ", buf[14+j], uac2_extension_unit_bmcontrols, protocol);
+ 
+ 			printf("        iExtension          %5u %s\n",
+-			       buf[15+j+k], term);
++			       buf[15+j], term);
+ 			dump_junk(buf, "        ", 16+j);
+ 			break;
+ 		} /* switch (protocol) */
+-- 
+2.4.3
+

@@ -1,0 +1,32 @@
+From 9660197b35b38b43dfcfdc701f5221da94f663a6 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Luk=C3=A1=C5=A1=20Nykr=C3=BDn?= <lnykryn@redhat.com>
+Date: Mon, 17 Oct 2011 17:04:02 +0200
+Subject: [PATCH 11/16] Add more space to lsusb.py output
+
+I want to suggest adding one more space between version and speed in
+lsusb.py. For USB 3.0 devices are these numbers connected.
+Example:
+3-4.1.2      090c:1000 00  2.00 480MBit/s 100mA 1IFs (SMI Corporation USB DISK AA04012700009416)
+usb4            1d6b:0003 09  3.005000MBit/s   0mA 1IFs (xhci_hcd 0000:00:14.0)
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+---
+ lsusb.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lsusb.py b/lsusb.py
+index a743db0..a34f736 100755
+--- a/lsusb.py
++++ b/lsusb.py
+@@ -383,7 +383,7 @@ class UsbDevice:
+ 		else:
+ 			col = cols[1]
+ 		if not nohub or self.iclass != 9:
+-			str = "%-16s%s%04x:%04x%s %02x %s%4sMBit/s %s %iIFs (%s%s%s)" % \
++			str = "%-16s%s%04x:%04x%s %02x %s%5sMBit/s %s %iIFs (%s%s%s)" % \
+ 				(" " * self.level + self.fname, 
+ 				 cols[1], self.vid, self.pid, cols[0],
+ 				 self.iclass, self.usbver, self.speed, self.maxpower,
+-- 
+2.4.3
+

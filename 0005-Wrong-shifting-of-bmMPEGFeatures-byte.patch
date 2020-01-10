@@ -1,0 +1,29 @@
+From 2e27350443fcfc6bc41bf8e2d6cebefa73b96146 Mon Sep 17 00:00:00 2001
+From: Lukas Nykryn <lnykryn@redhat.com>
+Date: Thu, 27 Oct 2011 12:29:17 +0200
+Subject: [PATCH 05/16] Wrong shifting of bmMPEGFeatures byte
+
+In previouse version ((buf[7] << 4) & 3) was always zero.
+Since we are interested in bits 4 and 5 there should be >> operator.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+---
+ lsusb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lsusb.c b/lsusb.c
+index 25dbc51..3d47721 100644
+--- a/lsusb.c
++++ b/lsusb.c
+@@ -1856,7 +1856,7 @@ static void dump_audiostreaming_interface(libusb_device_handle *dev, const unsig
+ 			}
+ 			printf("        bmMPEGFeatures       0x%02x\n", buf[7]);
+ 			printf("          Internal Dynamic Range Control: ");
+-			switch ((buf[7] << 4) & 3) {
++			switch ((buf[7] >> 4) & 3) {
+ 			case 0:
+ 				printf("not supported\n");
+ 				break;
+-- 
+2.4.3
+

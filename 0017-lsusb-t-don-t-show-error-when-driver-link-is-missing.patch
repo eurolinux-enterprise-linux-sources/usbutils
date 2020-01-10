@@ -1,0 +1,49 @@
+From b3ec39f1e30f89009e681f9e9c125cf2297cb9f4 Mon Sep 17 00:00:00 2001
+From: Lukas Nykryn <lnykryn@redhat.com>
+Date: Fri, 18 Mar 2016 17:53:34 +0100
+Subject: [PATCH 17/18] lsusb-t: don't show error when driver link is missing
+
+---
+ lsusb-t.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
+
+diff --git a/lsusb-t.c b/lsusb-t.c
+index 0721850..c3f7cc0 100644
+--- a/lsusb-t.c
++++ b/lsusb-t.c
+@@ -344,9 +344,7 @@ static void add_usb_interface(const char *d_name)
+ 	l = snprintf(link, MY_PATH_MAX, "%s/%s/driver", sys_bus_usb_devices, d_name);
+ 	if (l > 0 && l < MY_PATH_MAX) {
+ 		l = readlink(link, link, MY_PATH_MAX);
+-		if (l < 0)
+-			perror(d_name);
+-		else {
++		if (l >= 0) {
+ 			if (l < MY_PATH_MAX - 1)
+ 				link[l] = '\0';
+ 			else
+@@ -409,9 +407,7 @@ static void add_usb_device(const char *d_name)
+ 	l = snprintf(link, MY_PATH_MAX, "%s/%s/driver", sys_bus_usb_devices, d_name);
+ 	if (l > 0 && l < MY_PATH_MAX) {
+ 		l = readlink(link, link, MY_PATH_MAX);
+-		if (l < 0)
+-			perror(d_name);
+-		else {
++		if (l >= 0) {
+ 			if (l < MY_PATH_MAX - 1)
+ 				link[l] = '\0';
+ 			else
+@@ -432,9 +428,7 @@ static void get_roothub_driver(struct usbbusnode *b, const char *d_name)
+ 	l = snprintf(path, MY_PATH_MAX, "%s/%s/../driver", sys_bus_usb_devices, d_name);
+ 	if (l > 0 && l < MY_PATH_MAX) {
+ 		l = readlink(path, path, MY_PATH_MAX);
+-		if (l < 0)
+-			perror(d_name);
+-		else {
++		if (l >= 0) {
+ 			if (l < MY_PATH_MAX - 1)
+ 				path[l] = '\0';
+ 			else
+-- 
+2.4.3
+

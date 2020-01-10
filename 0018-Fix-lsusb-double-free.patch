@@ -1,0 +1,51 @@
+From f62e6030fbf3ede6da9f0c00d9bfb18d5015c183 Mon Sep 17 00:00:00 2001
+From: Carl-Daniel Hailfinger <c-d.hailfinger.devel.2006@gmx.net>
+Date: Wed, 25 May 2011 09:23:21 +0200
+Subject: [PATCH 18/18] Fix lsusb double-free
+
+Am 25.05.2011 00:18 schrieb Greg KH:
+> On Wed, May 25, 2011 at 12:02:48AM +0200, Carl-Daniel Hailfinger wrote:
+>
+>> I was playing with the "authorized" attribute of USB devices in
+>> sysfs.
+>> If at least one device has authorized=0,
+>> "lsusb" will print nothing (not even the host controllers)
+>>
+> Well, if the device can't be accessed, as you disabled it through the
+> authorised=0 setting, lsusb shouldn't really be able to do much with it.
+>
+
+Turns out there are two bugs:
+libusb screws up walking the bus and claims there are -1 devices (error).
+lsusb ignores that and tries to free a nonexisting object.
+
+Signed-off-by: Carl-Daniel Hailfinger <c-d.hailfinger.devel.2006@gmx.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+---
+ lsusb.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/lsusb.c b/lsusb.c
+index e8a8ee4..e604cf0 100644
+--- a/lsusb.c
++++ b/lsusb.c
+@@ -3853,6 +3853,8 @@ static int list_devices(libusb_context *ctx, int busnum, int devnum, int vendori
+ 	status = 1; /* 1 device not found, 0 device found */
+ 
+ 	num_devs = libusb_get_device_list(ctx, &list);
++	if (num_devs < 0)
++		goto error;
+ 
+ 	for (i = 0; i < num_devs; ++i) {
+ 		libusb_device *dev = list[i];
+@@ -3882,6 +3884,7 @@ static int list_devices(libusb_context *ctx, int busnum, int devnum, int vendori
+ 	}
+ 
+ 	libusb_free_device_list(list, 0);
++error:
+ 	return status;
+ }
+ 
+-- 
+2.4.3
+

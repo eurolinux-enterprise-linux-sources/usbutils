@@ -1,6 +1,6 @@
 Name: usbutils
 Version: 003
-Release: 4%{?dist}
+Release: 6%{?dist}
 Source: http://www.kernel.org/pub/linux/utils/usb/usbutils/%{name}-%{version}.tar.gz
 URL: http://www.linux-usb.org/
 License: GPLv2+
@@ -11,13 +11,27 @@ BuildRequires: autoconf, libtool, libusb-devel >= 0.1.8, libusb1-devel
 Summary: Linux USB utilities
 Group: Applications/System
 Conflicts: hotplug < 3:2002_01_14-2
-Patch0: usbutils-003-hwdata.patch
-# https://bugzilla.redhat.com/show_bug.cgi?id=707853
-# "[abrt] usbutils-001-3.fc15: find_otg: Process /usr/bin/lsusb was killed by
-# signal 11 (SIGSEGV)"
-# sent to upstream (Greg KH) via email and github pull request
-Patch1: usbutils-003-invalid-config-descriptors.patch
-Patch2: usbutils-003-man-usbids.patch
+
+Patch01: 0001-change-path-to-hwdata.patch
+Patch02: 0002-invalid-config-descriptors.patch
+Patch03: 0003-fix-path-to-usb.ids.patch
+Patch04: 0004-Buffer-overun.patch
+Patch05: 0005-Wrong-shifting-of-bmMPEGFeatures-byte.patch
+Patch06: 0006-Possible-resource-leak.patch
+Patch07: 0007-Using-uninitialized-value-as-index.patch
+Patch08: 0008-Reading-26-item-in-array-with-size-12.patch
+Patch09: 0009-Possible-buffer-overflow-when-using-SYSFS_STR.patch
+Patch10: 0010-usb-devices-1-fix-a-typo.patch
+Patch11: 0011-Add-more-space-to-lsusb.py-output.patch
+Patch12: 0012-remove-devtree-logic.patch
+Patch13: 0013-lsusb-t-make-sure-that-interfaces-are-added-to-lists.patch
+Patch14: 0014-Fix-lsusb-t-potentially-not-listing-all-devices.patch
+Patch15: 0015-lsusb-t-don-t-segfault-when-usbbuslist-is-empty.patch
+Patch16: 0016-lsusb-t-handle-problem-if-there-is-no-usb-bus-list.patch
+Patch17: 0017-lsusb-t-don-t-show-error-when-driver-link-is-missing.patch
+Patch18: 0018-Fix-lsusb-double-free.patch
+
+
 # libusb1 is also excluded on s390
 ExcludeArch: s390 s390x
 
@@ -27,10 +41,25 @@ USB bus.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1 -b .invalid-config-descriptors
-%patch2 -p1 
-autoreconf
+%patch01 -p1
+%patch02 -p1
+%patch03 -p1
+%patch04 -p1
+%patch05 -p1
+%patch06 -p1
+%patch07 -p1
+%patch08 -p1
+%patch09 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
+%patch16 -p1
+%patch17 -p1
+%patch18 -p1
+autoreconf -i
 
 %build
 %configure --sbindir=%{_sbindir}
@@ -59,6 +88,17 @@ ln -s %{_bindir}/lsusb $RPM_BUILD_ROOT%{_sbindir}/lsusb
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Fri Mar 18 2016 Lukáš Nykrýn <lnykryn@redhat.com> - 003-6
+- Fix lsusb double-free
+- lsusb-t: don't show error when driver link is missing
+
+* Fri Dec 04 2015 Lukáš Nykrýn <lnykryn@redhat.com> - 003-5
+- add support in lsusb to dump hardware hierarchy tree
+- fix coverity defects
+- add additional whitespace to lsusb.py for higher USB3 transfer rates
+- typo in man page for usb-devices
+- Resolves: #1033091, #735042, #746054, #1011232
+
 * Thu Sep 15 2011 Lukas Nykryn <lnykryn@redhat.com> 003-4
 - fixed usb.ids path in manpage rhbz#730671
 - Resolves: #730671

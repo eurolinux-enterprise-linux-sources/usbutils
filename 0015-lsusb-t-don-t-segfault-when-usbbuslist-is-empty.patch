@@ -1,0 +1,25 @@
+From 23273853217f5189c979389a6994d114ff72a7b2 Mon Sep 17 00:00:00 2001
+From: Lukas Nykryn <lnykryn@redhat.com>
+Date: Tue, 29 Apr 2014 15:05:05 +0200
+Subject: [PATCH 15/16] lsusb-t: don't segfault when usbbuslist is empty
+
+---
+ lsusb-t.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lsusb-t.c b/lsusb-t.c
+index 4f5b47a..cb66082 100644
+--- a/lsusb-t.c
++++ b/lsusb-t.c
+@@ -661,7 +661,7 @@ static void sort_busses(void)
+ 		p = usbbuslist;
+ 		pp = &usbbuslist;
+ 		swapped = 0;
+-		while (p->next) {
++		while (p && p->next) {
+ 			if (p->busnum < p->next->busnum) {
+ 				t = p->next;
+ 				p->next = t->next;
+-- 
+2.4.3
+

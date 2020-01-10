@@ -1,0 +1,30 @@
+From 699b01777074fc0f09b4b6efd05f1dee28391b36 Mon Sep 17 00:00:00 2001
+From: Lukas Nykryn <lnykryn@redhat.com>
+Date: Thu, 27 Oct 2011 14:27:47 +0200
+Subject: [PATCH 04/16] Buffer overun
+
+Because readlink() does not null-terminate buffer, only return
+number of written chars, thare is possibility that buf[ret] = 0;
+will write to unallocated area.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+---
+ usbmisc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/usbmisc.c b/usbmisc.c
+index 3e9fae1..3996ac9 100644
+--- a/usbmisc.c
++++ b/usbmisc.c
+@@ -46,7 +46,7 @@ static int readlink_recursive(const char *path, char *buf, size_t bufsize)
+ 	char *ptemp;
+ 	int ret;
+ 
+-	ret = readlink(path, buf, bufsize);
++	ret = readlink(path, buf, bufsize-1);
+ 
+ 	if (ret > 0) {
+ 		buf[ret] = 0;
+-- 
+2.4.3
+

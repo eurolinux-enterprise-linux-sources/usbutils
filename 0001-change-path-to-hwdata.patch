@@ -1,6 +1,18 @@
---- usbutils-003/Makefile.am	2011-03-22 00:23:33.000000000 +0100
-+++ usbutils-003_/Makefile.am	2011-06-16 15:41:20.927882420 +0200
-@@ -4,15 +4,9 @@
+From abd6f3fc71ad941f3dd5fb68a0dfca4e01720dd9 Mon Sep 17 00:00:00 2001
+From: Lukas Nykryn <lnykryn@redhat.com>
+Date: Wed, 2 Dec 2015 09:51:24 +0100
+Subject: [PATCH 01/16] change path to hwdata
+
+---
+ Makefile.am | 25 +------------------------
+ lsusb.py    |  2 +-
+ 2 files changed, 2 insertions(+), 25 deletions(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index aa3644a..559f3ed 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -4,15 +4,9 @@ SUBDIRS = \
  AM_LDFLAGS = \
  	-Wl,--as-needed
  
@@ -16,7 +28,7 @@
  bin_SCRIPTS = \
  	usb-devices \
  	lsusb.py
-@@ -27,37 +21,22 @@
+@@ -27,37 +21,22 @@ lsusb_SOURCES = \
  
  lsusb_CPPFLAGS = \
  	$(AM_CPPFLAGS) $(LIBUSB_CFLAGS) \
@@ -55,7 +67,7 @@
  lsusb.8: $(srcdir)/lsusb.8.in
  	sed 's|VERSION|$(VERSION)|g;s|@usbids@|$(datadir)/usb.ids|g' $< >$@
  
-@@ -71,10 +50,8 @@
+@@ -71,10 +50,8 @@ usbutils.pc: $(srcdir)/usbutils.pc.in
  	sed 's|@usbids@|$(datadir)/usb.ids|g;s|@VERSION[@]|$(VERSION)|g' $< >$@
  
  DISTCLEANFILES = \
@@ -66,9 +78,11 @@
  	usbutils.pc
  
  distclean-local:
---- usbutils-003/lsusb.py	2010-12-16 01:07:09.000000000 +0100
-+++ usbutils-003_/lsusb.py	2011-08-11 09:57:57.079327430 +0200
-@@ -16,7 +16,7 @@
+diff --git a/lsusb.py b/lsusb.py
+index 6703414..a743db0 100755
+--- a/lsusb.py
++++ b/lsusb.py
+@@ -16,7 +16,7 @@ nohub = False
  warnsort = False
  
  prefix = "/sys/bus/usb/devices/"
@@ -77,3 +91,6 @@
  
  esc = chr(27)
  norm = esc + "[0;0m"
+-- 
+2.4.3
+

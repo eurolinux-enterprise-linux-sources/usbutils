@@ -1,0 +1,27 @@
+From cc592e0d1f4708702c036bd0e36268b6da25a777 Mon Sep 17 00:00:00 2001
+From: Aurelien Jarno <aurelien@aurel32.net>
+Date: Mon, 23 Apr 2012 14:15:11 +0200
+Subject: [PATCH 10/16] usb-devices(1): fix a typo
+
+Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ usb-devices.1.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/usb-devices.1.in b/usb-devices.1.in
+index 35f9bbb..345c342 100644
+--- a/usb-devices.1.in
++++ b/usb-devices.1.in
+@@ -13,7 +13,7 @@ buses in the system and the devices connected to them.
+ The output of the script is similar to the \fIusb/devices\fP file
+ available either under \fI/proc/bus\fP (if usbfs is mounted), or under
+ \fI/sys/kernel/debug\fP (if debugfs is mounted there). The script is
+-primairily intended to be used if the file is not available.
++primarily intended to be used if the file is not available.
+ 
+ In contrast to the \fIusb/devices\fP file, this script only lists
+ \fIactive\fP interfaces (those marked with a "*" in the \fIusb/devices\fP
+-- 
+2.4.3
+

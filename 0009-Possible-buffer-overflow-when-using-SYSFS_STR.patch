@@ -1,0 +1,63 @@
+From 332c653a4df9d99326669b94878546f88629cb72 Mon Sep 17 00:00:00 2001
+From: Lukas Nykryn <lnykryn@redhat.com>
+Date: Mon, 24 Oct 2011 12:30:53 +0200
+Subject: [PATCH 09/16] Possible buffer overflow when using SYSFS_STR
+
+Macro SYSFS_STR was set to read MY_SYSFS_FILENAME_LEN (255) chars
+but size of arrays is only 64.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+---
+ lsusb-t.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
+
+diff --git a/lsusb-t.c b/lsusb-t.c
+index 1737981..17c7050 100644
+--- a/lsusb-t.c
++++ b/lsusb-t.c
+@@ -13,6 +13,7 @@
+ 
+ #define MY_SYSFS_FILENAME_LEN 255
+ #define MY_PATH_MAX 4096
++#define MY_PARAM_MAX 64
+ 
+ struct usbinterface {
+ 	struct list_head list;
+@@ -47,7 +48,7 @@ struct usbdevice {
+ 	unsigned int bDeviceProtocol;
+ 	unsigned int bDeviceSubClass;
+ 	unsigned int bMaxPacketSize0;
+-	char bMaxPower[64];
++	char bMaxPower[MY_PARAM_MAX];
+ 	unsigned int bNumConfigurations;
+ 	unsigned int bNumInterfaces;
+ 	unsigned int bcdDevice;
+@@ -57,11 +58,11 @@ struct usbdevice {
+ 	unsigned int idProduct;
+ 	unsigned int idVendor;
+ 	unsigned int maxchild;
+-	char manufacturer[64];
+-	char product[64];
+-	char serial[64];
+-	char version[64];
+-	char speed[5 + 1];	/* '1.5','12','480','5000' + '\n' */
++	char manufacturer[MY_PARAM_MAX];
++	char product[MY_PARAM_MAX];
++	char serial[MY_PARAM_MAX];
++	char version[MY_PARAM_MAX];
++	char speed[MY_PARAM_MAX];	/* '1.5','12','480','5000' + '\n' */
+ 
+ 	char name[MY_SYSFS_FILENAME_LEN];
+ 	char driver[MY_SYSFS_FILENAME_LEN];
+@@ -83,7 +84,7 @@ struct usbbusnode {
+ 
+ #define SYSFS_INTu(de,tgt, name) do { tgt->name = read_sysfs_file_int(de,#name,10); } while(0)
+ #define SYSFS_INTx(de,tgt, name) do { tgt->name = read_sysfs_file_int(de,#name,16); } while(0)
+-#define SYSFS_STR(de,tgt, name) do { read_sysfs_file_string(de, #name, tgt->name, MY_SYSFS_FILENAME_LEN); } while(0)
++#define SYSFS_STR(de,tgt, name) do { read_sysfs_file_string(de, #name, tgt->name, MY_PARAM_MAX); } while(0)
+ 
+ LIST_HEAD(interfacelist);
+ LIST_HEAD(usbdevlist);
+-- 
+2.4.3
+
