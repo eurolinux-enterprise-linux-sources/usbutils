@@ -1,25 +1,35 @@
 Name: usbutils
-Version: 0.86
-Release: 2%{?dist}
-Source:	http://downloads.sourceforge.net/linux-usb/%{name}-%{version}.tar.gz
+Version: 003
+Release: 4%{?dist}
+Source: http://www.kernel.org/pub/linux/utils/usb/usbutils/%{name}-%{version}.tar.gz
 URL: http://www.linux-usb.org/
 License: GPLv2+
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Requires: hwdata
-BuildRequires: autoconf, libtool, libusb-devel >= 0.1.8
+BuildRequires: autoconf, libtool, libusb-devel >= 0.1.8, libusb1-devel
 Summary: Linux USB utilities
 Group: Applications/System
 Conflicts: hotplug < 3:2002_01_14-2
-Patch0: usbutils-0.86-hwdata.patch
+Patch0: usbutils-003-hwdata.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=707853
+# "[abrt] usbutils-001-3.fc15: find_otg: Process /usr/bin/lsusb was killed by
+# signal 11 (SIGSEGV)"
+# sent to upstream (Greg KH) via email and github pull request
+Patch1: usbutils-003-invalid-config-descriptors.patch
+Patch2: usbutils-003-man-usbids.patch
+# libusb1 is also excluded on s390
+ExcludeArch: s390 s390x
 
-%description 
+%description
 This package contains utilities for inspecting devices connected to a
 USB bus.
 
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1 -b .invalid-config-descriptors
+%patch2 -p1 
 autoreconf
 
 %build
@@ -33,11 +43,15 @@ make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
 # usb.ids is shipped in hwdata; nuke and adjust .pc file
 sed -i 's|usbids=/usr/share/usb.ids|usbids=/usr/share/hwdata/usb.ids|' $RPM_BUILD_ROOT%{_datadir}/pkgconfig/usbutils.pc
 
+# compat with older usbutils
+mkdir -p $RPM_BUILD_ROOT%{_sbindir}
+ln -s %{_bindir}/lsusb $RPM_BUILD_ROOT%{_sbindir}/lsusb
+
 %files
 %defattr(-,root,root,-)
 %{_mandir}/*/*
-%{_sbindir}/*
 %{_bindir}/*
+%{_sbindir}/lsusb
 %{_datadir}/pkgconfig/usbutils.pc
 %doc AUTHORS COPYING ChangeLog NEWS README
 
@@ -45,6 +59,23 @@ sed -i 's|usbids=/usr/share/usb.ids|usbids=/usr/share/hwdata/usb.ids|' $RPM_BUIL
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Thu Sep 15 2011 Lukas Nykryn <lnykryn@redhat.com> 003-4
+- fixed usb.ids path in manpage rhbz#730671
+- Resolves: #730671
+
+* Fri Sep 09 2011 Jiri Moskovcak <jmoskovc@redhat.com> 003-3
+- symlinked lsusb to /usr/sbin rhbz#736739
+- Resolves: #736739
+
+* Thu Aug 11 2011 Jiri Moskovcak <jmoskovc@redhat.com> 003-2
+- fixed path to usb.ids in lsusb.py rhbz#729901
+- Resolves: #729901
+
+* Thu Jul 28 2011 Jiri Moskovcak <jmoskovc@redhat.com> 003-1
+- update to the latest upstream
+- adds support for usb3
+- Resolves: #725096 #725982 #725973
+
 * Tue Sep 22 2009  Jiri Moskovcak <jmoskovc@redhat.com> 0.86-2
 - spec file fixes - package should not own /usr/{bin,sbin} (rhbz#524005)
 
@@ -102,7 +133,7 @@ rm -rf $RPM_BUILD_ROOT
 - rebuilt
 
 * Fri Apr 15 2005 Thomas Woerner <twoerner@redhat.com> 0.70-1.1
-- added fix from Robert Scheck to fix missing BuildRequires for libusb-devel 
+- added fix from Robert Scheck to fix missing BuildRequires for libusb-devel
  (#155006)
 
 * Thu Apr 14 2005 Thomas Woerner <twoerner@redhat.com> 0.70-1

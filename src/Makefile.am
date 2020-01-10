@@ -1,20 +1,21 @@
+SUBDIRS = \
+	usbhid-dump
+
 AM_LDFLAGS = \
 	-Wl,--as-needed
 
 data_DATA = \
 	usb.ids
-if HAVE_ZLIB
-data_DATA += usb.ids.gz
-endif
 
-sbin_PROGRAMS = \
+bin_PROGRAMS = \
 	lsusb
 
 sbin_SCRIPTS = \
 	update-usbids.sh
 
 bin_SCRIPTS = \
-	usb-devices
+	usb-devices \
+	lsusb.py
 
 lsusb_SOURCES = \
 	lsusb.c \
@@ -25,11 +26,17 @@ lsusb_SOURCES = \
 	usbmisc.c usbmisc.h
 
 lsusb_CPPFLAGS = \
-	$(AM_CPPFLAGS) \
+	$(AM_CPPFLAGS) $(LIBUSB_CFLAGS) \
 	-DDATADIR=\"$(datadir)\"
 
 lsusb_LDADD = \
 	$(LIBUSB_LIBS)
+
+if HAVE_ZLIB
+data_DATA += usb.ids.gz
+lsusb_CPPFLAGS += -DHAVE_LIBZ
+lsusb_LDADD += -lz
+endif
 
 man_MANS = \
 	lsusb.8	\
@@ -41,6 +48,7 @@ EXTRA_DIST = \
 	lsusb.8.in \
 	usb-devices.1.in \
 	usb-devices \
+	lsusb.py \
 	usbutils.pc.in
 
 usb.ids.gz: $(srcdir)/usb.ids
@@ -56,7 +64,7 @@ lsusb.8: $(srcdir)/lsusb.8.in
 usb-devices.1: $(srcdir)/usb-devices.1.in
 	sed 's|VERSION|$(VERSION)|g' $< >$@
 
-pkgconfigdir = $(datadir)/pkgconfig
+pkgconfigdir = $(datarootdir)/pkgconfig
 pkgconfig_DATA = usbutils.pc
 
 usbutils.pc: $(srcdir)/usbutils.pc.in

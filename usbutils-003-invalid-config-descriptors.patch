@@ -1,0 +1,50 @@
+From d63fa164a4ffebc5247acaa3b80b0d4f2e21d926 Mon Sep 17 00:00:00 2001
+From: Nils Philippsen <nils@redhat.com>
+Date: Mon, 30 May 2011 17:19:47 +0200
+Subject: [PATCH] don't use invalid config descriptors
+
+This fixes "lsusb -v" crashing if device files are present but can't be
+opened.
+---
+ lsusb.c |   23 +++++++++++++++++------
+ 1 files changed, 17 insertions(+), 6 deletions(-)
+
+diff --git a/lsusb.c b/lsusb.c
+index 6ba2288..25dbc51 100644
+--- a/lsusb.c
++++ b/lsusb.c
+@@ -3800,14 +3800,25 @@ static void dumpdev(libusb_device *dev)
+ 	if (desc.bNumConfigurations) {
+ 		struct libusb_config_descriptor *config;
+ 
+-		libusb_get_config_descriptor(dev, 0, &config);
+-		otg = do_otg(config) || otg;
+-		libusb_free_config_descriptor(config);
++		ret = libusb_get_config_descriptor(dev, 0, &config);
++		if (ret) {
++			fprintf(stderr, "Couldn't get configuration descriptor 0, "
++					"some information will be missing\n");
++		} else {
++			otg = do_otg(config) || otg;
++			libusb_free_config_descriptor(config);
++		}
+ 
+ 		for (i = 0; i < desc.bNumConfigurations; ++i) {
+-			libusb_get_config_descriptor(dev, i, &config);
+-			dump_config(udev, config);
+-			libusb_free_config_descriptor(config);
++			ret = libusb_get_config_descriptor(dev, i, &config);
++			if (ret) {
++				fprintf(stderr, "Couldn't get configuration "
++						"descriptor %d, some information will "
++						"be missing\n", i);
++			} else {
++				dump_config(udev, config);
++				libusb_free_config_descriptor(config);
++			}
+ 		}
+ 	}
+ 	if (!udev)
+-- 
+1.7.5.4
+

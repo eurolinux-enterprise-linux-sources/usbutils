@@ -1,34 +1,39 @@
---- usbutils-0.86/Makefile.am_old	2009-09-16 11:56:26.000000000 +0200
-+++ usbutils-0.86/Makefile.am	2009-09-16 11:57:40.000000000 +0200
-@@ -1,18 +1,9 @@
+--- usbutils-003/Makefile.am	2011-03-22 00:23:33.000000000 +0100
++++ usbutils-003_/Makefile.am	2011-06-16 15:41:20.927882420 +0200
+@@ -4,15 +4,9 @@
  AM_LDFLAGS = \
  	-Wl,--as-needed
  
 -data_DATA = \
 -	usb.ids
--if HAVE_ZLIB
--data_DATA += usb.ids.gz
--endif
 -
- sbin_PROGRAMS = \
+ bin_PROGRAMS = \
  	lsusb
  
 -sbin_SCRIPTS = \
 -	update-usbids.sh
 -
  bin_SCRIPTS = \
- 	usb-devices
- 
-@@ -26,7 +17,7 @@
+ 	usb-devices \
+ 	lsusb.py
+@@ -27,37 +21,22 @@
  
  lsusb_CPPFLAGS = \
- 	$(AM_CPPFLAGS) \
+ 	$(AM_CPPFLAGS) $(LIBUSB_CFLAGS) \
 -	-DDATADIR=\"$(datadir)\"
 +	-DDATADIR=\"$(datadir)/hwdata\"
  
  lsusb_LDADD = \
  	$(LIBUSB_LIBS)
-@@ -36,20 +27,11 @@
+ 
+-if HAVE_ZLIB
+-data_DATA += usb.ids.gz
+-lsusb_CPPFLAGS += -DHAVE_LIBZ
+-lsusb_LDADD += -lz
+-endif
+-
+ man_MANS = \
+ 	lsusb.8	\
  	usb-devices.1
  
  EXTRA_DIST = \
@@ -37,6 +42,7 @@
  	lsusb.8.in \
  	usb-devices.1.in \
  	usb-devices \
+ 	lsusb.py \
  	usbutils.pc.in
  
 -usb.ids.gz: $(srcdir)/usb.ids
@@ -49,7 +55,7 @@
  lsusb.8: $(srcdir)/lsusb.8.in
  	sed 's|VERSION|$(VERSION)|g;s|@usbids@|$(datadir)/usb.ids|g' $< >$@
  
-@@ -63,10 +45,8 @@
+@@ -71,10 +50,8 @@
  	sed 's|@usbids@|$(datadir)/usb.ids|g;s|@VERSION[@]|$(VERSION)|g' $< >$@
  
  DISTCLEANFILES = \
@@ -60,3 +66,14 @@
  	usbutils.pc
  
  distclean-local:
+--- usbutils-003/lsusb.py	2010-12-16 01:07:09.000000000 +0100
++++ usbutils-003_/lsusb.py	2011-08-11 09:57:57.079327430 +0200
+@@ -16,7 +16,7 @@
+ warnsort = False
+ 
+ prefix = "/sys/bus/usb/devices/"
+-usbids = "/usr/share/usb.ids"
++usbids = "/usr/share/hwdata/usb.ids"
+ 
+ esc = chr(27)
+ norm = esc + "[0;0m"

@@ -1,0 +1,25 @@
+diff -up usbutils-003/Makefile.am.orig usbutils-003/Makefile.am
+--- usbutils-003/Makefile.am.orig	2011-09-15 10:08:01.490676969 +0200
++++ usbutils-003/Makefile.am	2011-09-15 10:11:24.767135662 +0200
+@@ -38,7 +38,7 @@ EXTRA_DIST = \
+ 	usbutils.pc.in
+ 
+ lsusb.8: $(srcdir)/lsusb.8.in
+-	sed 's|VERSION|$(VERSION)|g;s|@usbids@|$(datadir)/usb.ids|g' $< >$@
++	sed 's|VERSION|$(VERSION)|g;s|@usbids@|$(datadir)/hwdata/usb.ids|g' $< >$@
+ 
+ usb-devices.1: $(srcdir)/usb-devices.1.in
+ 	sed 's|VERSION|$(VERSION)|g' $< >$@
+diff -up usbutils-003/Makefile.in.orig usbutils-003/Makefile.in
+--- usbutils-003/Makefile.in.orig	2011-06-16 02:37:51.000000000 +0200
++++ usbutils-003/Makefile.in	2011-09-15 10:31:41.359926159 +0200
+@@ -1170,7 +1170,7 @@ update-usbids.sh: $(srcdir)/update-usbid
+ 	chmod 755 $@
+ 
+ lsusb.8: $(srcdir)/lsusb.8.in
+-	sed 's|VERSION|$(VERSION)|g;s|@usbids@|$(datadir)/usb.ids|g' $< >$@
++	sed 's|VERSION|$(VERSION)|g;s|@usbids@|$(datadir)/hwdata/usb.ids|g' $< >$@
+ 
+ usb-devices.1: $(srcdir)/usb-devices.1.in
+ 	sed 's|VERSION|$(VERSION)|g' $< >$@
+
