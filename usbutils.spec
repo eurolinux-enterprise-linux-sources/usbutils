@@ -1,6 +1,6 @@
 Name: usbutils
 Version: 007
-Release: 4%{?dist}
+Release: 5%{?dist}
 Source:	https://www.kernel.org/pub/linux/utils/usb/usbutils/%{name}-%{version}.tar.gz
 URL: http://www.linux-usb.org/
 License: GPLv2+
@@ -16,6 +16,9 @@ Conflicts: hotplug < 3:2002_01_14-2
 Patch0: usbutils-006-hwdata.patch
 Patch1: usbutils-007-python2.patch
 
+Patch2: 0001-lsusb-t-don-t-segfault-when-usbbuslist-is-empty.patch
+Patch3: 0001-lsusb-t-handle-problem-if-there-is-no-usb-bus-list.patch
+
 %description
 This package contains utilities for inspecting devices connected to a
 USB bus.
@@ -24,6 +27,9 @@ USB bus.
 %setup -q
 %patch0 -p1
 %patch1 -p1
+
+%patch2 -p1
+%patch3 -p1
 
 %build
 %configure --sbindir=%{_sbindir} --datadir=%{_datadir}/hwdata --disable-usbids
@@ -44,6 +50,9 @@ make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Mon Mar 30 2015 Lukáš Nykrýn <lnykryn@redhat.com> - 007-5
+- lsusb -t: fix crashes
+
 * Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 007-4
 - Mass rebuild 2014-01-24
 
