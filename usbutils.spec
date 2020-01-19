@@ -1,6 +1,6 @@
 Name: usbutils
 Version: 007
-Release: 2%{?dist}
+Release: 4%{?dist}
 Source:	https://www.kernel.org/pub/linux/utils/usb/usbutils/%{name}-%{version}.tar.gz
 URL: http://www.linux-usb.org/
 License: GPLv2+
@@ -44,6 +44,12 @@ make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 007-4
+- Mass rebuild 2014-01-24
+
+* Fri Dec 27 2013 Daniel Mach <dmach@redhat.com> - 007-3
+- Mass rebuild 2013-12-27
+
 * Thu Jul 25 2013 Lukáš Nykrýn <lnykryn@redhat.com> - 007-2
 - change shebang directly to python (#987047)
 
